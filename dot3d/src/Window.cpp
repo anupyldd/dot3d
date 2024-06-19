@@ -1,5 +1,7 @@
 #include "Window.h"
 
+#include "../resource.h"
+
 namespace dot3d { Window::WindowClass Window::WindowClass::s_windowClass;
 
 Window::Exception::Exception(const char* file, int line, HRESULT hr) noexcept
@@ -64,8 +66,8 @@ dot3d::Window::WindowClass::WindowClass() noexcept
 	wc.hInstance = GetInstance();
 	wc.hbrBackground = nullptr;
 	wc.hCursor = nullptr;
-	wc.hIcon = nullptr;
-	wc.hIconSm = nullptr;
+	wc.hIcon = static_cast<HICON>(LoadImage(m_hInst, MAKEINTRESOURCE(IDI_ICON1), IMAGE_ICON, 32, 32, 0));
+	wc.hIconSm = static_cast<HICON>(LoadImage(m_hInst, MAKEINTRESOURCE(IDI_ICON1), IMAGE_ICON, 16, 16, 0));
 	wc.lpszMenuName = nullptr;
 	wc.lpszClassName = GetName();
 
@@ -87,7 +89,7 @@ HINSTANCE dot3d::Window::WindowClass::GetInstance() noexcept
 	return s_windowClass.m_hInst;
 }
 
-dot3d::Window::Window(unsigned int width, unsigned int height, const wchar_t* name) noexcept
+dot3d::Window::Window(unsigned int width, unsigned int height, const wchar_t* name)
 {
 	RECT windRect;
 	windRect.left = 100;
@@ -103,7 +105,8 @@ dot3d::Window::Window(unsigned int width, unsigned int height, const wchar_t* na
 						windRect.right - windRect.left, windRect.bottom - windRect.top,
 						nullptr, nullptr, WindowClass::GetInstance(), this);
 
-	ShowWindow(m_hWnd, SW_SHOWDEFAULT);
+	if (m_hWnd) ShowWindow(m_hWnd, SW_SHOWDEFAULT);
+	else throw DOT_EXCEPT_LAST();
 }
 
 dot3d::Window::~Window()

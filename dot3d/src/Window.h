@@ -45,7 +45,7 @@ namespace dot3d
 		};
 
 	public:
-		Window(unsigned int width, unsigned int height, const wchar_t* name) noexcept;
+		Window(unsigned int width, unsigned int height, const wchar_t* name);
 		~Window();
 		Window(const Window&) = delete;
 		Window& operator=(const Window&) = delete;
@@ -60,3 +60,4 @@ namespace dot3d
 }
 
 #define DOT_EXCEPT(hr) dot3d::Window::Exception(__FILE__, __LINE__, hr)
+#define DOT_EXCEPT_LAST() dot3d::Window::Exception(__FILE__, __LINE__, GetLastError())
