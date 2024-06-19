@@ -87,7 +87,7 @@ HINSTANCE dot3d::Window::WindowClass::GetInstance() noexcept
 	return s_windowClass.m_hInst;
 }
 
-dot3d::Window::Window(unsigned int width, unsigned int height, const wchar_t* name) noexcept
+dot3d::Window::Window(unsigned int width, unsigned int height, const wchar_t* name)
 {
 	RECT windRect;
 	windRect.left = 100;
@@ -102,6 +102,8 @@ dot3d::Window::Window(unsigned int width, unsigned int height, const wchar_t* na
 						CW_USEDEFAULT, CW_USEDEFAULT, 
 						windRect.right - windRect.left, windRect.bottom - windRect.top,
 						nullptr, nullptr, WindowClass::GetInstance(), this);
+
+	if (!m_hWnd) throw DOT_EXCEPT_LAST();
 
 	ShowWindow(m_hWnd, SW_SHOWDEFAULT);
 }
