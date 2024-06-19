@@ -60,4 +60,4 @@ namespace dot3d
 }
 
 #define DOT_EXCEPT(hr) dot3d::Window::Exception(__FILE__, __LINE__, hr)
-#define DOT_EXCEPT_LAST dot3d::Window::Exception(__FILE__, __LINE__, GetLastError())
+#define DOT_EXCEPT_LAST() dot3d::Window::Exception(__FILE__, __LINE__, GetLastError())

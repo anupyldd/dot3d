@@ -10,7 +10,7 @@ int WINAPI WinMain(
 {
 	try
 	{
-		dot3d::Window wnd(640, 480, L"Window from Window class");
+		dot3d::Window wnd(640, 480, L"dot3d");
 
 		MSG msg;
 		BOOL gResult;

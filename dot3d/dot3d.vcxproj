@@ -152,10 +152,17 @@
     <ClCompile Include="WinMain.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="resource.h" />
     <ClInclude Include="src\assert_except.h" />
     <ClInclude Include="src\WinDef.h" />
     <ClInclude Include="src\WindowsMessageMap.h" />
     <ClInclude Include="src\Window.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="dot3d.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="resources\dot_icon.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
