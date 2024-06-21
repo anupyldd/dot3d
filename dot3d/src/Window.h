@@ -1,6 +1,8 @@
 #pragma once
 
 #include "WinDef.h"
+#include "Keyboard.h"
+
 #include "assert_except.h"
 using namespace util;
 
@@ -49,10 +51,15 @@ namespace dot3d
 		~Window();
 		Window(const Window&) = delete;
 		Window& operator=(const Window&) = delete;
+
+	public:
+		Keyboard kbd;
+
 	private:
 		static LRESULT WINAPI HandleMsgSetup(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 		static LRESULT WINAPI HandleMsgAdapt(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);	// allows to use HandleMsg
 		LRESULT HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+
 	private:
 		int m_width = 100, m_height = 100;
 		HWND m_hWnd;
