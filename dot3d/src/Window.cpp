@@ -140,10 +140,18 @@ LRESULT dot3d::Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lPar
 	{
 	case WM_CLOSE:
 		PostQuitMessage(0);
-		return 0;	// destruction done in destructor
+		return 0;	
+
+	case WM_KILLFOCUS:
+		kbd.ClearState();
+		break;
 
 	case WM_KEYDOWN:
-		kbd.OnKeyPressed(static_cast<uint8_t>(wParam));
+		// filter autorepeat
+		if (!(lParam & 0x40000000) || kbd.AutorepeatIsOn())
+		{
+			kbd.OnKeyPressed(static_cast<uint8_t>(wParam));
+		}
 		break;
 
 	case WM_CHAR:
