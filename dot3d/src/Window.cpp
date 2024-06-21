@@ -142,6 +142,18 @@ LRESULT dot3d::Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lPar
 		PostQuitMessage(0);
 		return 0;	// destruction done in destructor
 
+	case WM_KEYDOWN:
+		kbd.OnKeyPressed(static_cast<uint8_t>(wParam));
+		break;
+
+	case WM_CHAR:
+		kbd.OnChar(static_cast<uint8_t>(wParam));
+		break;
+
+	case WM_KEYUP:
+		kbd.OnKeyReleased(static_cast<uint8_t>(wParam));
+		break;
+
 	default:
 		break;
 	}
