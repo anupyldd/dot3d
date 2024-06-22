@@ -90,6 +90,7 @@ HINSTANCE dot3d::Window::WindowClass::GetInstance() noexcept
 }
 
 dot3d::Window::Window(unsigned int width, unsigned int height, const wchar_t* name)
+	: m_width(width), m_height(height)
 {
 	RECT windRect;
 	windRect.left = 100;
@@ -182,56 +183,56 @@ LRESULT dot3d::Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lPar
 
 	case WM_MOUSEMOVE:
 	{
-		POINTS pts = MAKEPOINTS(lParam);
+		const POINTS pts = MAKEPOINTS(lParam);
 		ms.OnEvent(pts.x, pts.y, Mouse::Event::TYPE::MOVE);
 		break;
 	}
 
 	case WM_LBUTTONDOWN:
 	{
-		POINTS pts = MAKEPOINTS(lParam);
+		const POINTS pts = MAKEPOINTS(lParam);
 		ms.OnEvent(pts.x, pts.y, Mouse::Event::TYPE::L_PRESS);
 		break;
 	}
 
 	case WM_LBUTTONUP:
 	{
-		POINTS pts = MAKEPOINTS(lParam);
+		const POINTS pts = MAKEPOINTS(lParam);
 		ms.OnEvent(pts.x, pts.y, Mouse::Event::TYPE::L_RELEASE);
 		break;
 	}
 
 	case WM_RBUTTONDOWN:
 	{
-		POINTS pts = MAKEPOINTS(lParam);
+		const POINTS pts = MAKEPOINTS(lParam);
 		ms.OnEvent(pts.x, pts.y, Mouse::Event::TYPE::R_PRESS);
 		break;
 	}
 
 	case WM_RBUTTONUP:
 	{
-		POINTS pts = MAKEPOINTS(lParam);
+		const POINTS pts = MAKEPOINTS(lParam);
 		ms.OnEvent(pts.x, pts.y, Mouse::Event::TYPE::R_RELEASE);
 		break;
 	}
 
 	case WM_MBUTTONDOWN:
 	{
-		POINTS pts = MAKEPOINTS(lParam);
+		const POINTS pts = MAKEPOINTS(lParam);
 		ms.OnEvent(pts.x, pts.y, Mouse::Event::TYPE::MIDDLE_PRESS);
 		break;
 	}
 
 	case WM_MBUTTONUP:
 	{
-		POINTS pts = MAKEPOINTS(lParam);
+		const POINTS pts = MAKEPOINTS(lParam);
 		ms.OnEvent(pts.x, pts.y, Mouse::Event::TYPE::MIDDLE_RELEASE);
 		break;
 	}
 
 	case WM_MOUSEWHEEL:
 	{
-		POINTS pts = MAKEPOINTS(lParam);
+		const POINTS pts = MAKEPOINTS(lParam);
 		if (GET_WHEEL_DELTA_WPARAM(wParam) > 0)
 		{
 			ms.OnEvent(pts.x, pts.y, Mouse::Event::TYPE::WHEEL_UP);
