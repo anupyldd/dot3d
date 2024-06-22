@@ -183,6 +183,7 @@ LRESULT dot3d::Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lPar
 
 	case WM_MOUSEMOVE:
 	{
+		// capures mouse movements if outside client but a btn is still pressed
 		const POINTS pts = MAKEPOINTS(lParam);
 		if (pts.x >= 0 && pts.x < m_width && pts.y >= 0 && pts.y < m_height)
 		{
@@ -190,7 +191,19 @@ LRESULT dot3d::Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lPar
 			if (!ms.IsInsideWindow())
 			{
 				SetCapture(m_hWnd);
-				ms.OnEvent
+				ms.OnEnter();
+			}
+		}
+		else
+		{
+			if (wParam & (MK_LBUTTON | MK_E_NOTBOUND))
+			{
+				ms.OnEvent(pts.x, pts.y, Mouse::Event::TYPE::MOVE);
+			}
+			else
+			{
+				ReleaseCapture();
+				ms.OnLeave();
 			}
 		}
 		break;
@@ -241,14 +254,8 @@ LRESULT dot3d::Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lPar
 	case WM_MOUSEWHEEL:
 	{
 		const POINTS pts = MAKEPOINTS(lParam);
-		if (GET_WHEEL_DELTA_WPARAM(wParam) > 0)
-		{
-			ms.OnEvent(pts.x, pts.y, Mouse::Event::TYPE::WHEEL_UP);
-		}
-		else
-		{
-			ms.OnEvent(pts.x, pts.y, Mouse::Event::TYPE::WHEEL_DOWN);
-		}
+		const int delta = GET_WHEEL_DELTA_WPARAM(wParam);
+		ms.OnWheelDelta(pts.x, pts.y, delta);
 		break;
 	}
 

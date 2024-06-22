@@ -1,3 +1,4 @@
+#include "WinDef.h"
 #include "Mouse.h"
 
 dot3d::MsPos dot3d::Mouse::GetPos() const noexcept
@@ -72,6 +73,21 @@ void dot3d::Mouse::OnLeave()
 	m_insideClient = false;
 	m_buf.push(Event(Event::TYPE::ENTER, *this));
 	TrimBuffer();
+}
+
+void dot3d::Mouse::OnWheelDelta(int x, int y, int delta) noexcept
+{
+	m_wheelDelta += delta;
+	while (m_wheelDelta >= WHEEL_DELTA)
+	{
+		m_wheelDelta -= WHEEL_DELTA;
+		OnEvent(x, y, Event::TYPE::WHEEL_UP);
+	}
+	while (m_wheelDelta <= -WHEEL_DELTA)
+	{
+		m_wheelDelta += WHEEL_DELTA;
+		OnEvent(x, y, Event::TYPE::WHEEL_DOWN);
+	}
 }
 
 void dot3d::Mouse::TrimBuffer() noexcept

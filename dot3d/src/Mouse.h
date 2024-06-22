@@ -80,8 +80,9 @@ namespace dot3d
 		static constexpr uint8_t m_bufSize = 16;
 
 		std::queue<Event> m_buf;
-		int m_x, m_y;
-		bool m_insideClient;
+		int  m_x = 0, m_y = 0;
+		int  m_wheelDelta = 0;
+		bool m_insideClient = false;
 		bool m_leftPressed = false;
 		bool m_rightPressed = false;
 		bool m_middleIsPressed = false;
