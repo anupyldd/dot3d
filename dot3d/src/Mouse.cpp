@@ -15,6 +15,11 @@ int dot3d::Mouse::GetY() const noexcept
 	return m_y;
 }
 
+bool dot3d::Mouse::IsInsideWindow() const noexcept
+{
+	return m_insideClient;
+}
+
 bool dot3d::Mouse::LeftIsPressed() const noexcept
 {
 	return m_leftPressed;
@@ -52,6 +57,20 @@ void dot3d::Mouse::OnEvent(int x, int y, Event::TYPE type)
 	m_x = x;
 	m_y = y;
 	m_buf.push(Event(type, *this));
+	TrimBuffer();
+}
+
+void dot3d::Mouse::OnEnter()
+{
+	m_insideClient = true;
+	m_buf.push(Event(Event::TYPE::ENTER, *this));
+	TrimBuffer();
+}
+
+void dot3d::Mouse::OnLeave()
+{
+	m_insideClient = false;
+	m_buf.push(Event(Event::TYPE::ENTER, *this));
 	TrimBuffer();
 }
 

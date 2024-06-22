@@ -22,13 +22,14 @@ namespace dot3d
 				R_PRESS, R_RELEASE,
 				MIDDLE_PRESS, MIDDLE_RELEASE,
 				WHEEL_UP, WHEEL_DOWN,
-				MOVE, 
+				MOVE, LEAVE, ENTER,
 				INVALID
 			};
 		public:
 			Event() = default;
 			Event(TYPE type, const Mouse& parentMs) noexcept
 				: m_type(type), m_x(parentMs.m_x), m_y(parentMs.m_y),
+					m_insideClient(parentMs.m_insideClient),
 					m_leftPressed(parentMs.m_leftPressed), 
 					m_rightPressed(parentMs.m_rightPressed),
 					m_middleIsPressed(parentMs.m_middleIsPressed) { }
@@ -38,6 +39,7 @@ namespace dot3d
 			MsPos GetPos() { return { m_x,m_y }; }
 			int GetX() const noexcept { return m_x; }
 			int GetY() const noexcept { return m_y; }
+			bool IsInsideWindow() const noexcept { return m_insideClient; }
 			bool LeftIsPressed() const noexcept { return m_leftPressed; }
 			bool RightIsPressed() const noexcept { return m_rightPressed; }
 			bool MiddleIsPressed() const noexcept { return m_middleIsPressed; }
@@ -45,6 +47,7 @@ namespace dot3d
 		private:
 			TYPE m_type = TYPE::INVALID;
 			int m_x = 0, m_y = 0;
+			bool m_insideClient = false;
 			bool m_leftPressed = false;
 			bool m_rightPressed = false;
 			bool m_middleIsPressed = false;
@@ -58,6 +61,7 @@ namespace dot3d
 		MsPos GetPos() const noexcept;
 		int GetX() const noexcept;
 		int GetY() const noexcept;
+		bool IsInsideWindow() const noexcept;
 		bool LeftIsPressed() const noexcept;
 		bool RightIsPressed() const noexcept;
 		bool MiddleIsPressed() const noexcept;
@@ -68,6 +72,8 @@ namespace dot3d
 
 	private:
 		void OnEvent(int x, int y, Event::TYPE type);
+		void OnEnter();
+		void OnLeave();
 		void TrimBuffer() noexcept;
 
 	private:
@@ -75,6 +81,7 @@ namespace dot3d
 
 		std::queue<Event> m_buf;
 		int m_x, m_y;
+		bool m_insideClient;
 		bool m_leftPressed = false;
 		bool m_rightPressed = false;
 		bool m_middleIsPressed = false;

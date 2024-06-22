@@ -184,7 +184,15 @@ LRESULT dot3d::Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lPar
 	case WM_MOUSEMOVE:
 	{
 		const POINTS pts = MAKEPOINTS(lParam);
-		ms.OnEvent(pts.x, pts.y, Mouse::Event::TYPE::MOVE);
+		if (pts.x >= 0 && pts.x < m_width && pts.y >= 0 && pts.y < m_height)
+		{
+			ms.OnEvent(pts.x, pts.y, Mouse::Event::TYPE::MOVE);
+			if (!ms.IsInsideWindow())
+			{
+				SetCapture(m_hWnd);
+				ms.OnEvent
+			}
+		}
 		break;
 	}
 
