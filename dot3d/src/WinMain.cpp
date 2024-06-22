@@ -1,6 +1,6 @@
-#include "src/WinDef.h"
-#include "src/WindowsMessageMap.h"
-#include "src/Window.h"
+#include "WinDef.h"
+#include "WindowsMessageMap.h"
+#include "Window.h"
 
 int WINAPI WinMain(
 	HINSTANCE hInstance,
