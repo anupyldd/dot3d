@@ -97,7 +97,8 @@ dot3d::Window::Window(unsigned int width, unsigned int height, const wchar_t* na
 	windRect.top = 100;
 	windRect.bottom = windRect.top + height;
 
-	AdjustWindowRect(&windRect, WS_CAPTION | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_SYSMENU, false);
+	if (!AdjustWindowRect(&windRect, WS_CAPTION | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_SYSMENU, false))
+		throw DOT_EXCEPT_LAST();
 
 	m_hWnd = CreateWindow(WindowClass::GetName(), name,
 						WS_CAPTION | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_SYSMENU,
@@ -112,6 +113,11 @@ dot3d::Window::Window(unsigned int width, unsigned int height, const wchar_t* na
 dot3d::Window::~Window()
 {
 	DestroyWindow(m_hWnd);
+}
+
+void dot3d::Window::SetTitle(const std::wstring& title) const noexcept
+{
+	if (!SetWindowText(m_hWnd, title.c_str())) throw DOT_EXCEPT_LAST();
 }
 
 LRESULT WINAPI dot3d::Window::HandleMsgSetup(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
