@@ -138,32 +138,110 @@ LRESULT dot3d::Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lPar
 {
 	switch (msg)
 	{
+
 	case WM_CLOSE:
+	{
 		PostQuitMessage(0);
-		return 0;	
+		return 0;
+	}
 
 	case WM_KILLFOCUS:
+	{
 		kbd.ClearState();
 		break;
+	}
 
 	case WM_KEYDOWN:
-		// filter autorepeat
+	case WM_SYSKEYDOWN:
+	{	// filter autorepeat
 		if (!(lParam & 0x40000000) || kbd.AutorepeatIsOn())
 		{
 			kbd.OnKeyPressed(static_cast<uint8_t>(wParam));
 		}
 		break;
+	}
 
 	case WM_CHAR:
+	{
 		kbd.OnChar(static_cast<uint8_t>(wParam));
 		break;
+	}
 
 	case WM_KEYUP:
+	case WM_SYSKEYUP:
+	{
 		kbd.OnKeyReleased(static_cast<uint8_t>(wParam));
 		break;
+	}
+
+	case WM_MOUSEMOVE:
+	{
+		POINTS pts = MAKEPOINTS(lParam);
+		ms.OnEvent(pts.x, pts.y, Mouse::Event::TYPE::MOVE);
+		break;
+	}
+
+	case WM_LBUTTONDOWN:
+	{
+		POINTS pts = MAKEPOINTS(lParam);
+		ms.OnEvent(pts.x, pts.y, Mouse::Event::TYPE::L_PRESS);
+		break;
+	}
+
+	case WM_LBUTTONUP:
+	{
+		POINTS pts = MAKEPOINTS(lParam);
+		ms.OnEvent(pts.x, pts.y, Mouse::Event::TYPE::L_RELEASE);
+		break;
+	}
+
+	case WM_RBUTTONDOWN:
+	{
+		POINTS pts = MAKEPOINTS(lParam);
+		ms.OnEvent(pts.x, pts.y, Mouse::Event::TYPE::R_PRESS);
+		break;
+	}
+
+	case WM_RBUTTONUP:
+	{
+		POINTS pts = MAKEPOINTS(lParam);
+		ms.OnEvent(pts.x, pts.y, Mouse::Event::TYPE::R_RELEASE);
+		break;
+	}
+
+	case WM_MBUTTONDOWN:
+	{
+		POINTS pts = MAKEPOINTS(lParam);
+		ms.OnEvent(pts.x, pts.y, Mouse::Event::TYPE::MIDDLE_PRESS);
+		break;
+	}
+
+	case WM_MBUTTONUP:
+	{
+		POINTS pts = MAKEPOINTS(lParam);
+		ms.OnEvent(pts.x, pts.y, Mouse::Event::TYPE::MIDDLE_RELEASE);
+		break;
+	}
+
+	case WM_MOUSEWHEEL:
+	{
+		POINTS pts = MAKEPOINTS(lParam);
+		if (GET_WHEEL_DELTA_WPARAM(wParam) > 0)
+		{
+			ms.OnEvent(pts.x, pts.y, Mouse::Event::TYPE::WHEEL_UP);
+		}
+		else
+		{
+			ms.OnEvent(pts.x, pts.y, Mouse::Event::TYPE::WHEEL_DOWN);
+		}
+		break;
+	}
 
 	default:
+	{
 		break;
+	}
+
 	}
 
 	return DefWindowProc(hWnd, msg, wParam, lParam);

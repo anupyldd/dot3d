@@ -2,6 +2,7 @@
 
 #include "WinDef.h"
 #include "Keyboard.h"
+#include "Mouse.h"
 
 #include "assert_except.h"
 using namespace util;
@@ -54,6 +55,7 @@ namespace dot3d
 
 	public:
 		Keyboard kbd;
+		Mouse ms;
 
 	private:
 		static LRESULT WINAPI HandleMsgSetup(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
