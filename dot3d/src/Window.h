@@ -48,6 +48,7 @@ namespace dot3d
 		};
 
 	public:
+		Window() = default;
 		Window(unsigned int width, unsigned int height, const wchar_t* name);
 		~Window();
 		Window(const Window&) = delete;
