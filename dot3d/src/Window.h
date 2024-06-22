@@ -53,6 +53,8 @@ namespace dot3d
 		Window(const Window&) = delete;
 		Window& operator=(const Window&) = delete;
 
+		void SetTitle(const std::wstring& title) const noexcept;
+
 	public:
 		Keyboard kbd;
 		Mouse ms;
