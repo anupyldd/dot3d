@@ -1,6 +1,7 @@
 #include "WinDef.h"
 #include "WindowsMessageMap.h"
 #include "Window.h"
+#include "App.h"
 
 int WINAPI WinMain(
 	HINSTANCE hInstance,
@@ -10,18 +11,7 @@ int WINAPI WinMain(
 {
 	try
 	{
-		dot3d::Window wnd(640, 480, L"dot3d");
-
-		MSG msg;
-		BOOL gResult;
-		while ((gResult = GetMessage(&msg, nullptr, 0, 0)) > 0)
-		{
-			TranslateMessage(&msg);
-			DispatchMessage(&msg);
-		}
-
-		if (gResult == -1) return -1;
-		else return msg.wParam;
+		return dot3d::App{}.Start();
 	}
 	catch (const util::ae::ExceptionBuffered& e)
 	{

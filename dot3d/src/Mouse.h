@@ -74,6 +74,7 @@ namespace dot3d
 		void OnEvent(int x, int y, Event::TYPE type);
 		void OnEnter();
 		void OnLeave();
+		void OnWheelDelta(int x, int y, int delta) noexcept;
 		void TrimBuffer() noexcept;
 
 	private:
