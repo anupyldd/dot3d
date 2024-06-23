@@ -3,6 +3,7 @@
 #include "WinDef.h"
 #include "Keyboard.h"
 #include "Mouse.h"
+#include "Graphics.h"
 
 #include "AssertExcept.h"
 using namespace util;
@@ -10,6 +11,7 @@ using namespace util;
 #include <source_location>
 #include <sstream>
 #include <optional>
+#include <memory>
 
 
 namespace dot3d
@@ -57,6 +59,7 @@ namespace dot3d
 
 		void SetTitle(const std::wstring& title) const noexcept;
 		static std::optional<int> ProcessMessage();
+		Graphics& Gfx();
 
 	public:
 		Keyboard kbd;
@@ -70,6 +73,7 @@ namespace dot3d
 	private:
 		int m_width = 100, m_height = 100;
 		HWND m_hWnd;
+		std::unique_ptr<Graphics> m_gfx;
 	};
 }
 

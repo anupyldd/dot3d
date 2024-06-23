@@ -3,7 +3,7 @@
 namespace dot3d
 {
 	App::App()
-		: wnd(640, 480, L"dot3d") { }
+		: m_wnd(640, 480, L"dot3d") { }
 
 	int App::Start()
 	{
@@ -18,6 +18,6 @@ namespace dot3d
 
 	void App::Update()
 	{
-
+		m_wnd.Gfx().Present();
 	}
 }
