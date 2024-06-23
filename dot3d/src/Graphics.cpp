@@ -25,18 +25,33 @@ dot3d::Graphics::Graphics(HWND hWnd)
 								D3D_DRIVER_TYPE_HARDWARE,
 								nullptr, 0, nullptr, 0,
 								D3D11_SDK_VERSION,
-								&desc, &m_SwapChain, &m_Device, 
-								nullptr, &m_Context);
+								&desc, &m_swapChain, &m_device, 
+								nullptr, &m_context);
+
+	ID3D11Resource* backBuffer = nullptr;
+	m_swapChain->GetBuffer(0, __uuidof(ID3D11Resource), reinterpret_cast<void**>(&backBuffer));
+	if (backBuffer)
+	{
+		m_device->CreateRenderTargetView(backBuffer, nullptr, &m_target);
+		backBuffer->Release();
+	}
 }
 
 dot3d::Graphics::~Graphics()
 {
-	if (m_SwapChain) m_SwapChain->Release();
-	if (m_Context) m_Context->Release();
-	if (m_Device) m_Device->Release();
+	if (m_swapChain) m_swapChain->Release();
+	if (m_context) m_context->Release();
+	if (m_target) m_target->Release();
+	if (m_device) m_device->Release();
+}
+
+void dot3d::Graphics::ClearBuffer(float r, float g, float b) noexcept
+{
+	const float color[] = { r,g,b,1.0f };
+	m_context->ClearRenderTargetView(m_target, color);
 }
 
 void dot3d::Graphics::Present()
 {
-	m_SwapChain->Present(1u, 0u);
+	m_swapChain->Present(1u, 0u);
 }

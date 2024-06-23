@@ -18,6 +18,7 @@ namespace dot3d
 
 	void App::Update()
 	{
+		m_wnd.Gfx().ClearBuffer(0.0f, 0.0f, 0.0f);
 		m_wnd.Gfx().Present();
 	}
 }
