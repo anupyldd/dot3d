@@ -121,6 +121,20 @@ void dot3d::Window::SetTitle(const std::wstring& title) const noexcept
 	if (!SetWindowText(m_hWnd, title.c_str())) throw DOT_EXCEPT_LAST();
 }
 
+std::optional<int> dot3d::Window::ProcessMessage()
+{
+	MSG msg;
+	while (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE))
+	{
+		if (msg.message == WM_QUIT) return msg.wParam;
+
+		TranslateMessage(&msg);
+		DispatchMessage(&msg);
+	}
+
+	return {};
+}
+
 LRESULT WINAPI dot3d::Window::HandleMsgSetup(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	if (msg == WM_NCCREATE)

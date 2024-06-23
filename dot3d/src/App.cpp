@@ -9,14 +9,11 @@ namespace dot3d
 	{
 		MSG msg;
 		BOOL result;
-		while ((result = GetMessage(&msg, nullptr, 0, 0)) > 0)
+		while (true)
 		{
-			TranslateMessage(&msg);
-			DispatchMessage(&msg);
+			if (const auto code = Window::ProcessMessage()) return *code;
 			Update();
 		}
-		if (result == -1) throw DOT_EXCEPT_LAST();
-		else return msg.wParam;
 	}
 
 	void App::Update()

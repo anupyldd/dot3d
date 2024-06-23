@@ -4,11 +4,12 @@
 #include "Keyboard.h"
 #include "Mouse.h"
 
-#include "assert_except.h"
+#include "AssertExcept.h"
 using namespace util;
 
 #include <source_location>
 #include <sstream>
+#include <optional>
 
 
 namespace dot3d
@@ -55,6 +56,7 @@ namespace dot3d
 		Window& operator=(const Window&) = delete;
 
 		void SetTitle(const std::wstring& title) const noexcept;
+		static std::optional<int> ProcessMessage();
 
 	public:
 		Keyboard kbd;
