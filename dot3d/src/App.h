@@ -15,6 +15,6 @@ namespace dot3d
 		void Update();
 
 	private:
-		Window wnd;
+		Window m_wnd;
 	};
 }

@@ -109,6 +109,8 @@ dot3d::Window::Window(unsigned int width, unsigned int height, const wchar_t* na
 
 	if (m_hWnd) ShowWindow(m_hWnd, SW_SHOWDEFAULT);
 	else throw DOT_EXCEPT_LAST();
+
+	m_gfx = std::make_unique<Graphics>(m_hWnd);
 }
 
 dot3d::Window::~Window()
@@ -133,6 +135,11 @@ std::optional<int> dot3d::Window::ProcessMessage()
 	}
 
 	return {};
+}
+
+dot3d::Graphics& dot3d::Window::Gfx()
+{
+	return *m_gfx;
 }
 
 LRESULT WINAPI dot3d::Window::HandleMsgSetup(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
