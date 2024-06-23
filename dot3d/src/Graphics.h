@@ -15,11 +15,13 @@ namespace dot3d
 		Graphics& operator=(const Graphics&) = delete;
 
 	public:
+		void ClearBuffer(float r, float g, float b) noexcept;
 		void Present();
 
 	private:
-		ID3D11Device* m_Device = nullptr;
-		IDXGISwapChain* m_SwapChain = nullptr;
-		ID3D11DeviceContext* m_Context = nullptr;
+		ID3D11Device* m_device = nullptr;
+		IDXGISwapChain* m_swapChain = nullptr;
+		ID3D11DeviceContext* m_context = nullptr;
+		ID3D11RenderTargetView* m_target = nullptr;
 	};
 }
