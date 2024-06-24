@@ -3,6 +3,9 @@
 #include "WinDef.h"
 #include <d3d11.h>
 
+#include <wrl.h>
+namespace dot3d { namespace wrl = Microsoft::WRL; }
+
 #include "AssertExcept.h"
 using namespace util;
 
@@ -34,8 +37,8 @@ namespace dot3d
 
 	public:
 		Graphics(HWND hWnd);
-		~Graphics();
 
+		~Graphics() = default;
 		Graphics(const Graphics&) = delete;
 		Graphics& operator=(const Graphics&) = delete;
 
@@ -44,10 +47,10 @@ namespace dot3d
 		void Present();
 
 	private:
-		ID3D11Device* m_device = nullptr;
-		IDXGISwapChain* m_swapChain = nullptr;
-		ID3D11DeviceContext* m_context = nullptr;
-		ID3D11RenderTargetView* m_target = nullptr;
+		wrl::ComPtr<ID3D11Device> m_device = nullptr;
+		wrl::ComPtr<IDXGISwapChain> m_swapChain = nullptr;
+		wrl::ComPtr<ID3D11DeviceContext> m_context = nullptr;
+		wrl::ComPtr<ID3D11RenderTargetView> m_target = nullptr;
 	};
 }
 

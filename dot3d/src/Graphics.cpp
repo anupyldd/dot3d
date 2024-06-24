@@ -30,25 +30,15 @@ dot3d::Graphics::Graphics(HWND hWnd)
 								&desc, &m_swapChain, &m_device, 
 								nullptr, &m_context));
 
-	ID3D11Resource* backBuffer = nullptr;
-	DOT_EXCEPT_GFX(m_swapChain->GetBuffer(0, __uuidof(ID3D11Resource), reinterpret_cast<void**>(&backBuffer)));
-	DOT_EXCEPT_GFX(m_device->CreateRenderTargetView(backBuffer, nullptr, &m_target));
-	backBuffer->Release();
-	
-}
-
-dot3d::Graphics::~Graphics()
-{
-	if (m_swapChain) m_swapChain->Release();
-	if (m_context) m_context->Release();
-	if (m_target) m_target->Release();
-	if (m_device) m_device->Release();
+	wrl::ComPtr<ID3D11Resource> backBuffer = nullptr;
+	DOT_EXCEPT_GFX(m_swapChain->GetBuffer(0, __uuidof(ID3D11Resource), &backBuffer));
+	DOT_EXCEPT_GFX(m_device->CreateRenderTargetView(backBuffer.Get(), nullptr, &m_target));
 }
 
 void dot3d::Graphics::ClearBuffer(float r, float g, float b) noexcept
 {
 	const float color[] = { r,g,b,1.0f };
-	m_context->ClearRenderTargetView(m_target, color);
+	m_context->ClearRenderTargetView(m_target.Get(), color);
 }
 
 void dot3d::Graphics::Present()
