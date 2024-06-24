@@ -24,7 +24,8 @@ dot3d::Graphics::Graphics(HWND hWnd)
 	HRESULT hr;
 	DOT_EXCEPT_GFX(D3D11CreateDeviceAndSwapChain(nullptr,
 								D3D_DRIVER_TYPE_HARDWARE,
-								nullptr, 0, nullptr, 0,
+								nullptr, D3D11_CREATE_DEVICE_DEBUG, 
+								nullptr, 0,
 								D3D11_SDK_VERSION,
 								&desc, &m_swapChain, &m_device, 
 								nullptr, &m_context));
