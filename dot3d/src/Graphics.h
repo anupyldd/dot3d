@@ -3,10 +3,35 @@
 #include "WinDef.h"
 #include <d3d11.h>
 
+#include "AssertExcept.h"
+using namespace util;
+
 namespace dot3d
 {
 	class Graphics
 	{
+	public:
+		class HRException : public ae::ExceptionBuffered
+		{
+		public:
+			HRException(const char* file, int line, HRESULT hr) noexcept;
+			const char* what() const noexcept override;
+			HRESULT GetErrorCode() const noexcept;
+			std::string GetErrorString() const noexcept;
+			std::string GetOriginString() const noexcept;
+			static std::string TranslateErrorCode(HRESULT hr);
+		private:
+			virtual std::string Name() const override { return "Graphics::Exception"; }
+			HRESULT m_hres;
+			std::string m_file;
+			int m_line;
+		};
+		class DeviceRemovedException : public HRException
+		{
+		public:
+			DeviceRemovedException(const char* file, int line, HRESULT hr) noexcept;
+		};
+
 	public:
 		Graphics(HWND hWnd);
 		~Graphics();
@@ -25,3 +50,8 @@ namespace dot3d
 		ID3D11RenderTargetView* m_target = nullptr;
 	};
 }
+
+// checks the hrc expression before throwing
+// HRESULT hr has to be declared in local scope before calling DOT_EXCEPT_GFX
+#define DOT_EXCEPT_GFX(hrc) if(FAILED(hr = (hrc))) throw Graphics::HRException(__FILE__, __LINE__, hr)
+#define DOT_EXCEPT_DEVICE_REMOVED(hr) Graphics::DeviceRemovedException(__FILE__, __LINE__, hr)

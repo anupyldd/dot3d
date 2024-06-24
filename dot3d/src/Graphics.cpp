@@ -21,20 +21,19 @@ dot3d::Graphics::Graphics(HWND hWnd)
 	desc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
 	desc.Flags = 0;
 
-	D3D11CreateDeviceAndSwapChain(nullptr,
+	HRESULT hr;
+	DOT_EXCEPT_GFX(D3D11CreateDeviceAndSwapChain(nullptr,
 								D3D_DRIVER_TYPE_HARDWARE,
 								nullptr, 0, nullptr, 0,
 								D3D11_SDK_VERSION,
 								&desc, &m_swapChain, &m_device, 
-								nullptr, &m_context);
+								nullptr, &m_context));
 
 	ID3D11Resource* backBuffer = nullptr;
-	m_swapChain->GetBuffer(0, __uuidof(ID3D11Resource), reinterpret_cast<void**>(&backBuffer));
-	if (backBuffer)
-	{
-		m_device->CreateRenderTargetView(backBuffer, nullptr, &m_target);
-		backBuffer->Release();
-	}
+	DOT_EXCEPT_GFX(m_swapChain->GetBuffer(0, __uuidof(ID3D11Resource), reinterpret_cast<void**>(&backBuffer)));
+	DOT_EXCEPT_GFX(m_device->CreateRenderTargetView(backBuffer, nullptr, &m_target));
+	backBuffer->Release();
+	
 }
 
 dot3d::Graphics::~Graphics()
@@ -53,5 +52,65 @@ void dot3d::Graphics::ClearBuffer(float r, float g, float b) noexcept
 
 void dot3d::Graphics::Present()
 {
-	m_swapChain->Present(1u, 0u);
+	HRESULT hr;
+	if (FAILED(hr = m_swapChain->Present(1, 0)))
+	{
+		if (hr == DXGI_ERROR_DEVICE_REMOVED)
+			throw DOT_EXCEPT_DEVICE_REMOVED(m_device->GetDeviceRemovedReason());
+		else
+			DOT_EXCEPT_GFX(hr);
+	}
+}
+
+dot3d::Graphics::HRException::HRException(const char* file, int line, HRESULT hr) noexcept
+	: m_hres(hr), m_file(file), m_line(line)
+{
+}
+
+const char* dot3d::Graphics::HRException::what() const noexcept
+{
+	std::ostringstream oss;
+	oss << Name() << " " << "[Error code]" << GetErrorCode() << '\n'
+		<< "[Description]" << GetErrorString() << '\n'
+		<< GetOriginString();
+	m_buffer = oss.str();
+	return m_buffer.c_str();
+}
+
+HRESULT dot3d::Graphics::HRException::GetErrorCode() const noexcept
+{
+	return m_hres;
+}
+
+std::string dot3d::Graphics::HRException::GetErrorString() const noexcept
+{
+	return TranslateErrorCode(m_hres);
+}
+
+std::string dot3d::Graphics::HRException::GetOriginString() const noexcept
+{
+	std::ostringstream oss;
+	oss << "[File] " << m_file << '\n'
+		<< "[Line] " << m_line;
+	return oss.str();
+}
+
+std::string dot3d::Graphics::HRException::TranslateErrorCode(HRESULT hr)
+{
+	char* msgBuf = nullptr;
+	DWORD msgLen = FormatMessageA(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM |
+		FORMAT_MESSAGE_IGNORE_INSERTS, nullptr, hr,
+		MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+		reinterpret_cast<LPSTR>(&msgBuf), 0, nullptr);
+
+	if (msgLen == 0) return "Unidentified error code";
+
+	std::string errorStr = msgBuf;
+	LocalFree(msgBuf);
+	return errorStr;
+}
+
+dot3d::Graphics::DeviceRemovedException::DeviceRemovedException(const char* file, int line, HRESULT hr) noexcept
+	: HRException(file, line, hr)
+{
 }
