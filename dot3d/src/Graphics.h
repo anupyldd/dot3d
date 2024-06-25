@@ -43,6 +43,9 @@ namespace dot3d
 		Graphics& operator=(const Graphics&) = delete;
 
 	public:
+
+		void DrawTestTriangle();
+
 		void ClearBuffer(float r, float g, float b) noexcept;
 		void Present();
 

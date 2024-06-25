@@ -76,4 +76,8 @@
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="src\shaders\VertexShader.hlsl" />
+    <FxCompile Include="src\shaders\PixelShader.hlsl" />
+  </ItemGroup>
 </Project>
