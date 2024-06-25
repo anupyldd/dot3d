@@ -1,6 +1,8 @@
 #include "Graphics.h"
+#include <d3dcompiler.h>
 
 #pragma comment(lib,"d3d11.lib")
+#pragma comment(lib,"D3DCompiler.lib")
 
 dot3d::Graphics::Graphics(HWND hWnd)
 {
@@ -33,6 +35,86 @@ dot3d::Graphics::Graphics(HWND hWnd)
 	wrl::ComPtr<ID3D11Resource> backBuffer = nullptr;
 	DOT_EXCEPT_GFX(m_swapChain->GetBuffer(0, __uuidof(ID3D11Resource), &backBuffer));
 	DOT_EXCEPT_GFX(m_device->CreateRenderTargetView(backBuffer.Get(), nullptr, &m_target));
+}
+
+void dot3d::Graphics::DrawTestTriangle()
+{
+	struct Vertex
+	{
+		float x, y;
+	};
+	const Vertex vert[3] =
+	{
+		{0.0f,0.5f},
+		{0.5f,-0.5f},
+		{-0.5f,-0.5f}
+	};
+
+	wrl::ComPtr<ID3D11Buffer> vBuffer;
+
+	D3D11_BUFFER_DESC desc = {};
+	desc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	desc.Usage = D3D11_USAGE_DEFAULT;
+	desc.CPUAccessFlags = 0;
+	desc.MiscFlags = 0;
+	desc.ByteWidth = sizeof(vert);
+	desc.StructureByteStride = sizeof(Vertex);
+
+	D3D11_SUBRESOURCE_DATA data = {};
+	data.pSysMem = &vert;
+
+	HRESULT hr;
+	DOT_EXCEPT_GFX(m_device->CreateBuffer(&desc, &data, &vBuffer));
+	
+	const UINT stride = sizeof(Vertex);
+	const UINT offset = 0;
+	m_context->IASetVertexBuffers(0, 1, vBuffer.GetAddressOf(), &stride, &offset);
+
+	wrl::ComPtr<ID3DBlob> blob;
+
+	// bind pixel shader
+	wrl::ComPtr<ID3D11PixelShader> pixShader;
+	DOT_EXCEPT_GFX(D3DReadFileToBlob(L"PixelShader.cso", &blob));
+	DOT_EXCEPT_GFX(m_device->CreatePixelShader(blob->GetBufferPointer(), 
+		blob->GetBufferSize(), nullptr, &pixShader));
+
+	m_context->PSSetShader(pixShader.Get(), 0, 0);
+
+	// bind vertex shader
+	wrl::ComPtr<ID3D11VertexShader> vertShader;
+	DOT_EXCEPT_GFX(D3DReadFileToBlob(L"VertexShader.cso", &blob));
+	DOT_EXCEPT_GFX(m_device->CreateVertexShader(blob->GetBufferPointer(),
+		blob->GetBufferSize(), nullptr, &vertShader));
+
+	m_context->VSSetShader(vertShader.Get(), 0, 0);
+
+	// input layout
+	wrl::ComPtr<ID3D11InputLayout> inputLayout;
+	const D3D11_INPUT_ELEMENT_DESC ied[] =
+	{
+		{"Position",0,DXGI_FORMAT_R32G32_FLOAT,0,0,D3D11_INPUT_PER_VERTEX_DATA,0}
+	};
+	DOT_EXCEPT_GFX(m_device->CreateInputLayout(ied, (UINT)std::size(ied),
+		blob->GetBufferPointer(), blob->GetBufferSize(), &inputLayout));
+	m_context->IASetInputLayout(inputLayout.Get());
+
+	// bind render target
+	m_context->OMSetRenderTargets(1, m_target.GetAddressOf(), nullptr);
+
+	// set primitive topology (triangle list)
+	m_context->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+	// set viewport
+	D3D11_VIEWPORT vp;
+	vp.Width = 640;
+	vp.Height = 480;
+	vp.MinDepth = 0;
+	vp.MaxDepth = 1;
+	vp.TopLeftX = 0;
+	vp.TopLeftY = 0;
+	m_context->RSSetViewports(1, &vp);
+
+	m_context->Draw((UINT)std::size(vert), 0);
 }
 
 void dot3d::Graphics::ClearBuffer(float r, float g, float b) noexcept
